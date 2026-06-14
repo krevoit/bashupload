@@ -48,14 +48,14 @@ if ($file['size'] && $requested_name !== '' && isset($metadata['name']) && $requ
 
 $is_direct_download = (($_GET['download'] ?? null) || $renderer !== 'html');
 
-if ($file['size'] && $is_direct_download && $file['password_protected'] && !password_matches(supplied_password())) {
+if ($file['size'] && $is_direct_download && $file['password_protected'] && !upload_password_matches($metadata, supplied_password())) {
   header('HTTP/1.0 403 Forbidden');
   $error = 'Password required.';
 }
 
 
 # title for rendering info
-$title = $file['name'] . ' / download from bashupload.com';
+$title = $file['name'] . ' / download from ' . app_name();
 
 
 # render

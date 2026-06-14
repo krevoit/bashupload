@@ -7,15 +7,11 @@ declare(strict_types=1);
 
 $expiration_seconds = parse_expiration_seconds($_POST['expiration_seconds'] ?? $_SERVER['HTTP_X_EXPIRATION_SECONDS'] ?? null);
 $password_protected = wants_password_protection();
+$upload_password = supplied_password();
 $short_url = wants_short_url();
 
-if ($password_protected) {
-  if (configured_password() === '') {
-    $error = 'Password protection is not configured on this server.';
-  }
-  else if (!password_matches(supplied_password())) {
-    $error = 'Invalid password for password-protected upload.';
-  }
+if ($password_protected && $upload_password === '') {
+  $error = 'Password protection requires a password.';
 }
 
 if ($error) {
@@ -89,6 +85,7 @@ foreach ( $_FILES as $key_file => $file )
     'uploaded_at' => time(),
     'expires_at' => $expiration_seconds ? time() + $expiration_seconds : null,
     'password_protected' => $password_protected,
+    'password_hash' => $password_protected ? password_hash_for_upload($upload_password) : null,
     'short_url' => $short_url,
     'downloads' => 0,
     'max_downloads' => $expiration_seconds ? null : 1,

@@ -108,6 +108,12 @@ function force_https_enabled(): bool
 }
 
 
+function app_name(): string
+{
+  return defined('APP_NAME') ? (string)APP_NAME : 'bashupload';
+}
+
+
 # Convert user-controlled file names into safe display/download names.
 function sanitize_file_name(string $name): string
 {
@@ -212,9 +218,9 @@ function truthy(mixed $value): bool
 }
 
 
-function configured_password(): string
+function password_hash_for_upload(string $password): string
 {
-  return defined('PASSWORD') ? (string)PASSWORD : '';
+  return password_hash($password, PASSWORD_DEFAULT);
 }
 
 
@@ -229,10 +235,10 @@ function supplied_password(): string
 }
 
 
-function password_matches(string $password): bool
+function upload_password_matches(array $metadata, string $password): bool
 {
-  $configured = configured_password();
-  return $configured !== '' && hash_equals($configured, $password);
+  $hash = (string)($metadata['password_hash'] ?? '');
+  return $hash !== '' && password_verify($password, $hash);
 }
 
 

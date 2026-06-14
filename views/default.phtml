@@ -33,17 +33,17 @@
       <span class="toggle-ui"></span>
       <span>
         <strong>Use password protection</strong>
-        <small>Requires the configured server password.</small>
+        <small>Use a password you choose for this upload.</small>
       </span>
     </label>
 
     <label class="field-control">
       <span>
         <strong>Expiration time</strong>
-        <small>Defaults to 30 minutes.</small>
+        <small>0 uses the server default.</small>
       </span>
       <div class="duration-control">
-        <input type="number" id="expiration-value" min="1" max="<?=ceil(MAX_EXPIRATION_SECONDS / 60)?>" data-max-seconds="<?=MAX_EXPIRATION_SECONDS?>" value="30" oninput="update_curl_example();" />
+        <input type="number" id="expiration-value" min="0" max="<?=ceil(MAX_EXPIRATION_SECONDS / 60)?>" data-max-seconds="<?=MAX_EXPIRATION_SECONDS?>" value="0" oninput="update_curl_example();" />
         <div class="duration-units" role="group" aria-label="Expiration unit">
           <label>
             <input type="radio" name="expiration-unit" value="minutes" checked onchange="sync_expiration_limits(); update_curl_example();" />
@@ -60,7 +60,7 @@
     <label id="password-row" class="field-control hidden">
       <span>
         <strong>Password</strong>
-        <small>Must match PASSWORD on the server.</small>
+        <small>Required to download this file.</small>
       </span>
       <input type="password" id="upload-password" autocomplete="current-password" oninput="update_curl_example();" />
     </label>
@@ -99,7 +99,7 @@
     <li>File is automatically deleted after download or expiration</li>
   </ol>
 
-  <p><strong>Password Protection:</strong> When password protection is enabled, you must enter the server's configured PASSWORD in the upload form and include the same password in the Authorization header when downloading. Download with: <code class="inline">curl -H 'Authorization: yourpassword' [URL]</code></p>
+  <p><strong>Password Protection:</strong> When password protection is enabled, choose a password for that upload and include the same password in the Authorization header when downloading. Download with: <code class="inline">curl -H 'Authorization: yourpassword' [URL]</code></p>
 
   <p><strong>Download Notice:</strong> By default, files can only be downloaded ONCE. After the first download, the file is automatically and permanently deleted from our servers. If you set an expiration time, the file can be downloaded multiple times until it expires. This ensures maximum privacy and security for your shared files.</p>
 </div>

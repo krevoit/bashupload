@@ -6,7 +6,7 @@
   	
   	<div id="upload-instructions">
   	  <div align="center" id="browser-header">Download from command line:</div>
-	    <code><?=($file['password_protected'] ? "curl -H 'Authorization: yourpassword' " : 'wget ')?><?=htmlspecialchars(request_scheme() . '://' . HOST . '/' . $file['id'] . '/' . rawurlencode($file['name']))?></code>
+	    <code><?=($file['password_protected'] ? "curl -H 'Authorization: yourpassword' " : 'wget ')?><?=htmlspecialchars(upload_base_url() . '/' . $file['id'] . '/' . rawurlencode($file['name']))?></code>
   	</div>
   	
   	<p class="note" align="center">
