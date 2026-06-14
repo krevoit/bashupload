@@ -1,4 +1,4 @@
-PHP/JavaScript file upload web app to upload files from command line & browser, and download them elsewhere. Frequently used to upload/download files on servers. Hosted version is available at [**bashupload.com**](https://bashupload.com/).
+PHP/JavaScript file upload web app to upload files from command line & browser, and download them elsewhere. Frequently used to upload/download files on servers. Not recommended to serve publicly.
 
 # Features
 1. Upload from command line with curl (or other CLI tools).
