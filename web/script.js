@@ -93,12 +93,12 @@ function append_upload_options(formData) {
 	var shortUrl = document.getElementById('short-url');
 	var passwordProtected = document.getElementById('password-protected');
 	var password = document.getElementById('upload-password');
-	var expiration = document.getElementById('expiration-seconds');
+	var expirationSeconds = get_expiration_seconds();
 
 	if (shortUrl && shortUrl.checked) formData.append('short_url', 'true');
 	if (passwordProtected && passwordProtected.checked) formData.append('password_protected', 'true');
 	if (password && password.value) formData.append('password', password.value);
-	if (expiration && expiration.value) formData.append('expiration_seconds', expiration.value);
+	if (expirationSeconds) formData.append('expiration_seconds', expirationSeconds);
 }
 
 
@@ -116,12 +116,12 @@ function update_curl_example() {
 	if (!example) return;
 
 	var parts = ['curl'];
-	var expiration = document.getElementById('expiration-seconds');
+	var expirationSeconds = get_expiration_seconds();
 	var shortUrl = document.getElementById('short-url');
 	var passwordProtected = document.getElementById('password-protected');
 
-	if (expiration && expiration.value) {
-		parts.push("-H 'X-Expiration-Seconds: " + expiration.value + "'");
+	if (expirationSeconds) {
+		parts.push("-H 'X-Expiration-Seconds: " + expirationSeconds + "'");
 	}
 
 	if (shortUrl && shortUrl.checked) {
@@ -136,6 +136,58 @@ function update_curl_example() {
 	parts.push(window.location.host);
 	parts.push('-T your_file.txt');
 	example.innerText = parts.join(' ');
+}
+
+
+function get_expiration_seconds() {
+	var expiration = document.getElementById('expiration-value');
+	var unit = document.querySelector('input[name="expiration-unit"]:checked');
+	if (!expiration || !expiration.value) return null;
+
+	var value = parseInt(expiration.value, 10);
+	if (!value || value < 1) return null;
+
+	return value * (unit && unit.value == 'hours' ? 3600 : 60);
+}
+
+
+function sync_expiration_limits() {
+	var expiration = document.getElementById('expiration-value');
+	var unit = document.querySelector('input[name="expiration-unit"]:checked');
+	if (!expiration || !unit) return;
+
+	var maxSeconds = parseInt(expiration.dataset.maxSeconds, 10);
+	var max = Math.max(1, Math.floor(maxSeconds / (unit.value == 'hours' ? 3600 : 60)));
+	expiration.max = max;
+
+	if (parseInt(expiration.value, 10) > max) {
+		expiration.value = max;
+	}
+}
+
+
+function toggle_lights() {
+	var lightsOff = document.getElementById('lights-off');
+	var enabled = lightsOff && lightsOff.checked;
+	document.documentElement.classList.toggle('lights-off', enabled);
+
+	try {
+		localStorage.setItem('bashupload-lights-off', enabled ? 'true' : 'false');
+	}
+	catch (e) {}
+}
+
+
+function init_lights() {
+	var lightsOff = document.getElementById('lights-off');
+	if (!lightsOff) return;
+
+	try {
+		lightsOff.checked = localStorage.getItem('bashupload-lights-off') == 'true';
+	}
+	catch (e) {}
+
+	toggle_lights();
 }
 
 
@@ -183,7 +235,9 @@ function init_uploads() {
 	}, false);
 
 	uploading();
+	init_lights();
 	toggle_password();
+	sync_expiration_limits();
 	update_curl_example();
 }
 

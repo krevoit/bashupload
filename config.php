@@ -35,7 +35,7 @@ define('MAX_DOWNLOADS', 1);
 define('HOST', $_SERVER['HTTP_HOST'] ?? 'localhost');
 
 # that's just to reset css/js cache on changes (added as GET parameter)
-define('STATIC_VERSION', 9);
+define('STATIC_VERSION', 10);
 
 # is this available on the web? (will add meta tags and logo)
 define('WEB', true);

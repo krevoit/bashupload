@@ -15,6 +15,15 @@
 
   <section class="upload-options" aria-label="Upload options">
     <label class="option-toggle">
+      <input type="checkbox" id="lights-off" onchange="toggle_lights();" />
+      <span class="toggle-ui"></span>
+      <span>
+        <strong>Lights off</strong>
+        <small>Switch to a darker interface.</small>
+      </span>
+    </label>
+
+    <label class="option-toggle">
       <input type="checkbox" id="short-url" onchange="update_curl_example();" />
       <span class="toggle-ui"></span>
       <span>
@@ -35,9 +44,21 @@
     <label class="field-control">
       <span>
         <strong>Expiration time</strong>
-        <small>Seconds until automatic deletion.</small>
+        <small>Defaults to 30 minutes.</small>
       </span>
-      <input type="number" id="expiration-seconds" min="1" max="<?=MAX_EXPIRATION_SECONDS?>" placeholder="3600" oninput="update_curl_example();" />
+      <div class="duration-control">
+        <input type="number" id="expiration-value" min="1" max="<?=ceil(MAX_EXPIRATION_SECONDS / 60)?>" data-max-seconds="<?=MAX_EXPIRATION_SECONDS?>" value="30" oninput="update_curl_example();" />
+        <div class="duration-units" role="group" aria-label="Expiration unit">
+          <label>
+            <input type="radio" name="expiration-unit" value="minutes" checked onchange="sync_expiration_limits(); update_curl_example();" />
+            <span>Min</span>
+          </label>
+          <label>
+            <input type="radio" name="expiration-unit" value="hours" onchange="sync_expiration_limits(); update_curl_example();" />
+            <span>Hr</span>
+          </label>
+        </div>
+      </div>
     </label>
 
     <label id="password-row" class="field-control hidden">
@@ -76,7 +97,7 @@
   <h2>How It Works</h2>
   <ol>
     <li>Use curl with the -T flag to upload your file</li>
-    <li>(Optional) Set expiration time with -H 'X-Expiration-Seconds: 3600' for time-limited access</li>
+    <li>(Optional) Set expiration time in minutes or hours, or with -H 'X-Expiration-Seconds: 3600' from curl</li>
     <li>Receive a unique download URL</li>
     <li>Share the URL - works once without expiration, or multiple times until expiration!</li>
     <li>File is automatically deleted after download or expiration</li>

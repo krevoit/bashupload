@@ -7,7 +7,7 @@ PHP/JavaScript file upload web app to upload files from command line & browser, 
 1. Upload from browser or mobile with file browser.
 1. Upload from browser with drag and drop.
 1. Optional short sharing URLs.
-1. Optional per-upload expiration in seconds.
+1. Optional per-upload expiration from the web UI in minutes or hours, or from curl in seconds.
 1. Optional password-protected downloads using the configured server password.
 1. Automatic filesize limit based on php.ini post_max_size and upload_max_filesize settings.
 1. Files are automatically removed after the first download by default, after per-upload expiration, or after the configured legacy retention period.
