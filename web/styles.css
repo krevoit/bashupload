@@ -200,7 +200,14 @@ footer {
 	background: #57c878;
 }
 
+.command-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
 .copy-command,
+.icon-command,
 #choosefile {
 	border: 0;
 	border-radius: 6px;
@@ -216,7 +223,24 @@ footer {
 	font-size: 12px;
 }
 
+.icon-command {
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	background: rgba(255, 255, 255, .08);
+	color: #dceae7;
+	font-size: 17px;
+}
+
+.icon-command[aria-pressed="true"] {
+	background: rgba(79, 183, 189, .22);
+	color: #ffffff;
+}
+
 .copy-command:hover,
+.icon-command:hover,
 #choosefile:hover {
 	background: var(--accent-strong);
 	box-shadow: 0 8px 20px rgba(0, 124, 137, .22);

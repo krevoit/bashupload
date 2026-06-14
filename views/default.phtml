@@ -4,25 +4,21 @@
       <div class="window-controls" aria-hidden="true">
         <span></span><span></span><span></span>
       </div>
-      <button type="button" class="copy-command" onclick="copy_code_to_clipboard();" title="Copy command">
-        Copy
-      </button>
+      <div class="command-actions">
+        <button type="button" id="lights-off" class="icon-command" onclick="toggle_lights();" aria-label="Turn lights off" aria-pressed="false" title="Turn lights off">
+          ☾
+        </button>
+        <button type="button" class="copy-command" onclick="copy_code_to_clipboard();" title="Copy command">
+          Copy
+        </button>
+      </div>
     </div>
 
-    <code id="curl-example">curl <?=HOST?> -T your_file.txt</code>
+    <code id="curl-example" data-upload-url="<?=htmlspecialchars(upload_base_url())?>">curl <?=htmlspecialchars(upload_base_url())?> -T your_file.txt</code>
     <p id="copy-status" class="copy-status" aria-live="polite"></p>
   </section>
 
   <section class="upload-options" aria-label="Upload options">
-    <label class="option-toggle">
-      <input type="checkbox" id="lights-off" onchange="toggle_lights();" />
-      <span class="toggle-ui"></span>
-      <span>
-        <strong>Lights off</strong>
-        <small>Switch to a darker interface.</small>
-      </span>
-    </label>
-
     <label class="option-toggle">
       <input type="checkbox" id="short-url" onchange="update_curl_example();" />
       <span class="toggle-ui"></span>

@@ -28,6 +28,7 @@ Make sure you have:
 
 # Configuration
 - You can change config.php (or untracked config.local.php file) to tune expiration and password settings to your needs.
+- Set FORCE_HTTPS to true to require HTTPS and generate https:// download/upload URLs in the web UI and responses.
 - Set PASSWORD to allow users to create password-protected uploads. Protected downloads require an Authorization header with the configured password.
 - Change post_max_size and upload_max_filesize in php.ini to meet your needs on maximum upload file size.
 - If you use Nginx, don't forget to update "client_max_body_size" param as well.

@@ -64,16 +64,31 @@ function gen_id(int $length = 8): string
 # Build an absolute URL for an uploaded file.
 function file_url(array $file): string
 {
-  $scheme = request_scheme();
   $name = rawurlencode($file['name']);
   $path = !empty($file['short_url']) ? $file['id'] : $file['id'] . '/' . $name;
 
-  return $scheme . '://' . HOST . '/' . $path;
+  return upload_base_url() . '/' . $path;
+}
+
+
+function upload_base_url(): string
+{
+  return request_scheme() . '://' . HOST;
 }
 
 
 # Detect request scheme behind a proxy-aware web server.
 function request_scheme(): string
+{
+  if (force_https_enabled()) {
+    return 'https';
+  }
+
+  return actual_request_scheme();
+}
+
+
+function actual_request_scheme(): string
 {
   if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
     return strtolower((string)explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'])[0]) === 'https' ? 'https' : 'http';
@@ -84,6 +99,12 @@ function request_scheme(): string
   }
 
   return $_SERVER['REQUEST_SCHEME'] ?? 'http';
+}
+
+
+function force_https_enabled(): bool
+{
+  return (bool)FORCE_HTTPS;
 }
 
 

@@ -133,7 +133,7 @@ function update_curl_example() {
 		parts.push("-H 'Authorization: yourpassword'");
 	}
 
-	parts.push(window.location.host);
+	parts.push(example.dataset.uploadUrl || window.location.origin);
 	parts.push('-T your_file.txt');
 	example.innerText = parts.join(' ');
 }
@@ -168,8 +168,8 @@ function sync_expiration_limits() {
 
 function toggle_lights() {
 	var lightsOff = document.getElementById('lights-off');
-	var enabled = lightsOff && lightsOff.checked;
-	document.documentElement.classList.toggle('lights-off', enabled);
+	var enabled = lightsOff && lightsOff.getAttribute('aria-pressed') != 'true';
+	set_lights(enabled);
 
 	try {
 		localStorage.setItem('bashupload-lights-off', enabled ? 'true' : 'false');
@@ -178,16 +178,34 @@ function toggle_lights() {
 }
 
 
+function set_lights(enabled) {
+	var lightsOff = document.getElementById('lights-off');
+	document.documentElement.classList.toggle('lights-off', enabled);
+
+	if (!lightsOff) return;
+
+	lightsOff.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+	lightsOff.title = enabled ? 'Turn lights on' : 'Turn lights off';
+	lightsOff.setAttribute('aria-label', enabled ? 'Turn lights on' : 'Turn lights off');
+	lightsOff.innerText = enabled ? '☀' : '☾';
+}
+
+
+function saved_lights_enabled() {
+	try {
+		return localStorage.getItem('bashupload-lights-off') == 'true';
+	}
+	catch (e) {
+		return false;
+	}
+}
+
+
 function init_lights() {
 	var lightsOff = document.getElementById('lights-off');
 	if (!lightsOff) return;
 
-	try {
-		lightsOff.checked = localStorage.getItem('bashupload-lights-off') == 'true';
-	}
-	catch (e) {}
-
-	toggle_lights();
+	set_lights(saved_lights_enabled());
 }
 
 

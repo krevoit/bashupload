@@ -14,8 +14,17 @@ $has_docs = false;
 $error = null;
 $uploads = [];
 
-if (FORCE_SSL && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && request_scheme() !== 'https') {
-  header('Location: https://' . HOST . $uri, true, 301);
+if (force_https_enabled() && actual_request_scheme() !== 'https') {
+  $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+  if (in_array($method, ['GET', 'HEAD'], true)) {
+    header('Location: https://' . HOST . $uri, true, 301);
+    exit;
+  }
+
+  header('HTTP/1.1 426 Upgrade Required');
+  header('Content-type: text/plain;charset=utf-8');
+  echo 'HTTPS is required for uploads and downloads.';
   exit;
 }
 

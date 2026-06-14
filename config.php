@@ -15,8 +15,8 @@ if ( (basename(__FILE__) != 'config.local.php') && is_file(__DIR__ . '/config.lo
 # where files will recide (make sure it has writable permissions)
 define('STORAGE', '/var/files');
 
-# should we redirect user to SSL version of the website (only on GET requests)
-define('FORCE_SSL', false);
+# should we require HTTPS and generate HTTPS links?
+define('FORCE_HTTPS', false);
 
 # How many days should we keep files without a per-upload expiration?
 define('EXPIRE_DAYS', 30);
@@ -35,7 +35,7 @@ define('MAX_DOWNLOADS', 1);
 define('HOST', $_SERVER['HTTP_HOST'] ?? 'localhost');
 
 # that's just to reset css/js cache on changes (added as GET parameter)
-define('STATIC_VERSION', 10);
+define('STATIC_VERSION', 11);
 
 # is this available on the web? (will add meta tags and logo)
 define('WEB', true);
