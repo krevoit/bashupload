@@ -16,12 +16,16 @@ function upload_files(files) {
 	let url = '/'
 	let formData = new FormData()
 	var uploaded = document.getElementById('uploaded');
+	var status = document.getElementById('copy-status');
 	formData.append('json', 'true');
+	append_upload_options(formData);
+
+	if (status) status.innerText = '';
 
 	for ( var i = 0; i < files.length; i++ )
 	{
 		var node = document.createElement('li');
-		node.innerText = 'Uploading...';
+		node.innerText = 'Uploading';
 		node.classList.add('uploading');
 		node.id = 'file_' + ++file_id;
 		uploaded.appendChild(node);
@@ -44,9 +48,26 @@ function upload_files(files) {
 		var files = json;
 		
 		for ( var file_key in files ) {
+			if (file_key == 'error') {
+				continue;
+			}
+
 			var file_progress = document.querySelector('#' + file_key);
-			file_progress.innerHTML = '<a target="_blank" href="' + files[file_key].url + '">' + files[file_key].url + '</a> ' + files[file_key].size + ' bytes';
+			file_progress.replaceChildren();
+			var link = document.createElement('a');
+			link.target = '_blank';
+			link.href = files[file_key].url;
+			link.innerText = files[file_key].url;
+			file_progress.appendChild(link);
+			file_progress.appendChild(document.createTextNode('  ' + files[file_key].size + ' bytes'));
 			file_progress.classList.remove('uploading');
+		}
+
+		if (json.error) {
+			var node = document.createElement('li');
+			node.innerText = json.error;
+			node.classList.add('failed');
+			uploaded.appendChild(node);
 		}
 
 		var elements = document.getElementsByClassName('uploading');
@@ -62,9 +83,59 @@ function upload_files(files) {
 
 		var elements = document.getElementsByClassName('uploading');
 		for ( var i = 0; i < elements.length; i++ ) {
-			elements[i].innerText = 'Failed :(';
+				elements[i].innerText = 'Upload failed';
 		}
 	});
+}
+
+
+function append_upload_options(formData) {
+	var shortUrl = document.getElementById('short-url');
+	var passwordProtected = document.getElementById('password-protected');
+	var password = document.getElementById('upload-password');
+	var expiration = document.getElementById('expiration-seconds');
+
+	if (shortUrl && shortUrl.checked) formData.append('short_url', 'true');
+	if (passwordProtected && passwordProtected.checked) formData.append('password_protected', 'true');
+	if (password && password.value) formData.append('password', password.value);
+	if (expiration && expiration.value) formData.append('expiration_seconds', expiration.value);
+}
+
+
+function toggle_password() {
+	var row = document.getElementById('password-row');
+	var passwordProtected = document.getElementById('password-protected');
+
+	if (!row || !passwordProtected) return;
+	row.classList.toggle('hidden', !passwordProtected.checked);
+}
+
+
+function update_curl_example() {
+	var example = document.getElementById('curl-example');
+	if (!example) return;
+
+	var parts = ['curl'];
+	var expiration = document.getElementById('expiration-seconds');
+	var shortUrl = document.getElementById('short-url');
+	var passwordProtected = document.getElementById('password-protected');
+
+	if (expiration && expiration.value) {
+		parts.push("-H 'X-Expiration-Seconds: " + expiration.value + "'");
+	}
+
+	if (shortUrl && shortUrl.checked) {
+		parts.push("-H 'X-Short-Url: 1'");
+	}
+
+	if (passwordProtected && passwordProtected.checked) {
+		parts.push("-H 'X-Password-Protect: 1'");
+		parts.push("-H 'Authorization: yourpassword'");
+	}
+
+	parts.push(window.location.host);
+	parts.push('-T your_file.txt');
+	example.innerText = parts.join(' ');
 }
 
 
@@ -112,6 +183,8 @@ function init_uploads() {
 	}, false);
 
 	uploading();
+	toggle_password();
+	update_curl_example();
 }
 
 
@@ -119,11 +192,12 @@ function init_uploads() {
 // Utilities
 function copy_code_to_clipboard() {
   var txt = document.getElementById("copy");
-  txt.value = document.querySelector('code').innerText;
+  var status = document.getElementById("copy-status");
+  txt.value = document.getElementById('curl-example').innerText;
   
   txt.select();
   txt.setSelectionRange(0, 99999);
   
   document.execCommand("copy");
-  document.querySelector('#browser-header').innerText = 'Code copied to buffer successfully';
+  if (status) status.innerText = 'Command copied';
 }

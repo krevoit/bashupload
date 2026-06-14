@@ -4,8 +4,13 @@ Welcome to bashupload
 
 To upload file use the following command:
 ------------------------------------------------------------
-curl <?=HOST?>/name.txt --data-binary @file.txt
+curl <?=HOST?> -T file.txt
 ------------------------------------------------------------
+
+Optional:
+  -H 'X-Expiration-Seconds: 3600' allows repeated downloads for one hour.
+  -H 'X-Short-Url: 1' returns a shorter sharing URL.
+  -H 'X-Password-Protect: 1' -H 'Authorization: yourpassword' protects downloads.
 
 =========================
 

@@ -26,8 +26,11 @@ if ( $uploads )
 
 	foreach ( $uploads as $file ) 
 	{
-		$url = $_SERVER['REQUEST_SCHEME'] . '://' . HOST . '/' . $file['id'] . '/' . $file['name'];
+		$url = file_url($file);
 		echo "wget {$url}" . "\n";
+		if ( $file['password_protected'] ) {
+			echo "curl -H 'Authorization: yourpassword' {$url} -o " . $file['name'] . "\n";
+		}
     echo "\n";
 	}
 	

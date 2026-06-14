@@ -1,9 +1,13 @@
 <?php
 
+$res = [];
 $total = 0;
 foreach ( $uploads as $file ) $res[$file['upload_name']] = [
-	'url' => $_SERVER['REQUEST_SCHEME'] . '://' . HOST . '/' . $file['id'] . '/' . $file['name'],
-	'size' => number_format($file['size'], 0, '.', ' ')
+	'url' => file_url($file),
+	'size' => number_format($file['size'], 0, '.', ' '),
+	'expires_at' => $file['expires_at'],
+	'password_protected' => $file['password_protected'],
+	'short_url' => $file['short_url']
 ];
 
 if ( $error ) $res['error'] = $error;

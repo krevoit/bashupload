@@ -1,26 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 # Clean expired and outdated files from storage
 
 require __DIR__ . '/../config.php';
+require __DIR__ . '/../lib.php';
 
+$storage = realpath(STORAGE);
+if ($storage === false || !is_dir($storage)) {
+  exit;
+}
 
+$now = time();
+$legacy_cutoff = $now - (EXPIRE_DAYS * 86400);
 
-# delete all expired files
-exec('find ' . realpath(STORAGE) . ' -type f -mtime +' . EXPIRE_DAYS . ' -delete');
+foreach (new DirectoryIterator($storage) as $entry) {
+  if (!$entry->isFile()) {
+    continue;
+  }
 
+  $path = $entry->getPathname();
 
-# select all files with ".delete" metafile
-# with at least one download was made (> 60 minutes ago to make sure downloading process is complete for big files)
-exec('find ' . realpath(STORAGE) . ' -type f -name "*.delete" -mmin +60', $o);
+  if (str_ends_with($path, '.json') || str_ends_with($path, '.delete')) {
+    continue;
+  }
 
+  $metadata = read_metadata($path);
 
-# remove all files which were downloaded max times
-foreach ( $o as $file ) {
-  if ( max(intval(file_get_contents($file)), 1) >= MAX_DOWNLOADS ) {
-    echo $file . "\n";
-    
-    exec('rm -rf ' . $file);
-    exec('rm -rf ' . str_replace('.delete', '', $file));
+  if ($metadata) {
+    $expires_at = $metadata['expires_at'] ?? null;
+    if ($expires_at && $now >= (int)$expires_at) {
+      echo $path . "\n";
+      delete_upload($path);
+    }
+
+    continue;
+  }
+
+  $download_mark_file = $path . '.delete';
+  $downloads = is_file($download_mark_file) ? (int)file_get_contents($download_mark_file) : 0;
+  $download_mark_old_enough = is_file($download_mark_file) && filemtime($download_mark_file) < ($now - 3600);
+
+  if ($entry->getMTime() < $legacy_cutoff || ($download_mark_old_enough && max($downloads, 1) >= MAX_DOWNLOADS)) {
+    echo $path . "\n";
+    delete_upload($path);
   }
 }

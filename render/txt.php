@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 # TXT renderer
 
 $txt_view = __DIR__ . "/../views/{$action}.txt.phtml";
 
 if ( is_file($txt_view) ) {
-  header('Content-type: text/plain;charset=utf8');
+  header('Content-type: text/plain;charset=utf-8');
   include $txt_view;
 }
 else {

@@ -1,11 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 
 
 # Configure
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../lib.php';
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = is_string($uri) ? $uri : '/';
+$doc = null;
+$has_docs = false;
+$error = null;
+$uploads = [];
+
+if (FORCE_SSL && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && request_scheme() !== 'https') {
+  header('Location: https://' . HOST . $uri, true, 301);
+  exit;
+}
 
 
 
@@ -13,7 +25,7 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $docs_handler = __DIR__ . '/../../bashupload-docs/index.php';
 $action = 'default';
 
-if ( in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT']) ) {
+if ( in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT'], true) ) {
   
   $action = 'upload';
 }
@@ -38,9 +50,9 @@ else {
 
 
 # Execute routed handler
-$accept = explode(',', $_SERVER['HTTP_ACCEPT']);
-if ( $_POST['json'] == 'true' ) $renderer = 'json';
-else if ( in_array('text/html', $accept) ) $renderer = 'html';
+$accept = explode(',', $_SERVER['HTTP_ACCEPT'] ?? '');
+if ( ($_POST['json'] ?? null) == 'true' ) $renderer = 'json';
+else if ( in_array('text/html', $accept, true) ) $renderer = 'html';
 else $renderer = 'txt';
 
 $action_handler = __DIR__ . "/../actions/{$action}.php";

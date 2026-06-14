@@ -1,35 +1,90 @@
-<div id="focus">
-  <div id="upload-instructions"
-       onclick="copy_code_to_clipboard();"
-       onmouseover="document.querySelector('#browser-header').innerText='Click to copy'"
-       onmouseout="document.querySelector('#browser-header').innerText=''">
-    
-    <div id="browser-header"></div>
-    
-  	<code>curl <?=HOST?> -T your_file.txt</code>
-  </div>
-  
-  <p class="note" align="center">
-  	<span class="aslo">alternatively</span>
-  	<a id=choosefile href="javascript:document.getElementById('inputfile').click();">choose file(s)</a>
-  	<span class="aslo">to upload</span>
-  	
-  	<?php if ( $has_docs ) { ?>
-  	  <a href="/how_to_upload_file_to_server" title="Uploading to a server through cli">or read more docs</a>
-  	<?php } ?>
-  </p>
-  
+<div id="focus" class="upload-workbench">
+  <section class="command-panel" aria-label="Upload command">
+    <div class="command-toolbar">
+      <div class="window-controls" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <button type="button" class="copy-command" onclick="copy_code_to_clipboard();" title="Copy command">
+        Copy
+      </button>
+    </div>
+
+    <code id="curl-example">curl <?=HOST?> -T your_file.txt</code>
+    <p id="copy-status" class="copy-status" aria-live="polite"></p>
+  </section>
+
+  <section class="upload-options" aria-label="Upload options">
+    <label class="option-toggle">
+      <input type="checkbox" id="short-url" onchange="update_curl_example();" />
+      <span class="toggle-ui"></span>
+      <span>
+        <strong>Generate short URL</strong>
+        <small>Shorter links for sharing.</small>
+      </span>
+    </label>
+
+    <label class="option-toggle">
+      <input type="checkbox" id="password-protected" onchange="toggle_password(); update_curl_example();" />
+      <span class="toggle-ui"></span>
+      <span>
+        <strong>Use password protection</strong>
+        <small>Requires the configured server password.</small>
+      </span>
+    </label>
+
+    <label class="field-control">
+      <span>
+        <strong>Expiration time</strong>
+        <small>Seconds until automatic deletion.</small>
+      </span>
+      <input type="number" id="expiration-seconds" min="1" max="<?=MAX_EXPIRATION_SECONDS?>" placeholder="3600" oninput="update_curl_example();" />
+    </label>
+
+    <label id="password-row" class="field-control hidden">
+      <span>
+        <strong>Password</strong>
+        <small>Must match PASSWORD on the server.</small>
+      </span>
+      <input type="password" id="upload-password" autocomplete="current-password" oninput="update_curl_example();" />
+    </label>
+  </section>
+
+  <section class="browser-upload" aria-label="Browser upload">
+    <button type="button" id="choosefile" onclick="document.getElementById('inputfile').click();">
+      Choose files
+    </button>
+    <span>or drop files anywhere on this page</span>
+
+    <?php if ( $has_docs ) { ?>
+      <a href="/how_to_upload_file_to_server" title="Uploading to a server through cli">Read docs</a>
+    <?php } ?>
+  </section>
+
   <form method="post" onsubmit="return false;">
-  	<input type="file" style="display:none;" multiple id="inputfile" onchange="upload();" />
+    <input type="file" hidden multiple id="inputfile" onchange="upload();" />
   </form>
-  
-  <input type="text" id="copy"/>
+
+  <input type="text" id="copy" aria-hidden="true"/>
 </div>
 
 
 <ul id="uploaded"></ul>
-<div id="dropper">Drop your files here...</div>
+<div id="dropper">Drop files to upload</div>
 <div id="dropzone"></div>
 
+<div class="how-it-works">
+  <h2>How It Works</h2>
+  <ol>
+    <li>Use curl with the -T flag to upload your file</li>
+    <li>(Optional) Set expiration time with -H 'X-Expiration-Seconds: 3600' for time-limited access</li>
+    <li>Receive a unique download URL</li>
+    <li>Share the URL - works once without expiration, or multiple times until expiration!</li>
+    <li>File is automatically deleted after download or expiration</li>
+  </ol>
+
+  <p><strong>Password Protection:</strong> When password protection is enabled, you must enter the server's configured PASSWORD in the upload form and include the same password in the Authorization header when downloading. Download with: <code class="inline">curl -H 'Authorization: yourpassword' [URL]</code></p>
+
+  <p><strong>Download Notice:</strong> By default, files can only be downloaded ONCE. After the first download, the file is automatically and permanently deleted from our servers. If you set an expiration time, the file can be downloaded multiple times until it expires. This ensures maximum privacy and security for your shared files.</p>
+</div>
 
 <script>init_uploads();</script>

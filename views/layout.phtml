@@ -1,14 +1,15 @@
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
-  <title><?=$title ? : 'bashupload / upload files from command line'?></title>
+  <title><?=htmlspecialchars($title ?? 'bashupload / upload files from command line')?></title>
   
 	<link rel="stylesheet" href="/styles.css?<?=STATIC_VERSION?>">
 	<script src="/script.js?<?=STATIC_VERSION?>"></script>
 	
 	<?php if ( WEB ) { ?>
   	<link rel="icon" href="/logo.png">
-  	<meta name="description" content="<?=$description ? : 'Upload files from command line to cloud and then download to desktop or server'?>">
+	  <meta name="description" content="<?=htmlspecialchars($description ?? 'Upload files from command line to cloud and then download to desktop or server')?>">
   	<meta name="keywords" content="Upload from command line, upload using bash, upload file to server, download file from server">
   	<meta name="author" content="zeroapps.dev">
 	<?php } ?>
@@ -18,10 +19,11 @@
 
 <body>
 	<div id="content">
-		<header>
+		<header class="site-header">
 			<?php if ( $uri != '/' ) { ?>
-				<p>The <b><a href="/">bashupload</a></b> is a place to upload files from command line or other ways and download them elsewhere.
+				<p><b><a href="/">bashupload</a></b> is a place to upload files from command line or other ways and download them elsewhere.</p>
 			<?php } else { ?>
+				<p class="eyebrow">Private file transfer from shell or browser</p>
 				<h1>bashupload</h1>
 				<p>
 				  Upload files from command line to easily share between servers, desktops and mobiles, <?=file_upload_max_size()?> max.

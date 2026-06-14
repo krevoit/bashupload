@@ -6,11 +6,11 @@
   	
   	<div id="upload-instructions">
   	  <div align="center" id="browser-header">Download from command line:</div>
-  	  <code>wget <?=$_SERVER['REQUEST_SCHEME']?>://<?=HOST?><?=$_SERVER['REQUEST_URI']?></code>
+	    <code><?=($file['password_protected'] ? "curl -H 'Authorization: yourpassword' " : 'wget ')?><?=htmlspecialchars(request_scheme() . '://' . HOST . '/' . $file['id'] . '/' . rawurlencode($file['name']))?></code>
   	</div>
   	
   	<p class="note" align="center">
-  		<a href="<?=$_SERVER['REQUEST_URI']?>?download=1">Direct download</a>
+		  <a href="<?=htmlspecialchars('/' . $file['id'] . '/' . rawurlencode($file['name']))?>?download=1">Direct download</a>
   		(<?=number_format($file['size'] / 1024, 1, '.', ',')?> KB)
   	</p>
   	

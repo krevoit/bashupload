@@ -6,13 +6,15 @@ PHP/JavaScript file upload web app to upload files from command line & browser, 
 1. Download from browser.
 1. Upload from browser or mobile with file browser.
 1. Upload from browser with drag and drop.
+1. Optional short sharing URLs.
+1. Optional per-upload expiration in seconds.
+1. Optional password-protected downloads using the configured server password.
 1. Automatic filesize limit based on php.ini post_max_size and upload_max_filesize settings.
-1. Files are automatically removed after specified number of days (configurable).
-1. Files are automatically removed after specified number of downloads (also configurable).
+1. Files are automatically removed after the first download by default, after per-upload expiration, or after the configured legacy retention period.
 
 # Installation
 Make sure you have:
-- php 7.2+
+- php 8.4+
 - Nginx 1.14+ (host config example located in the "setup" folder) or other webserver which can talk to PHP
 - "/var/files" folder available for writing/reading to a web user ("www-data" usually)
 
@@ -25,6 +27,7 @@ Make sure you have:
 ```
 
 # Configuration
-- You can change config.php (or untracked config.local.php file) to tune expiration and download limits to your needs.
+- You can change config.php (or untracked config.local.php file) to tune expiration and password settings to your needs.
+- Set PASSWORD to allow users to create password-protected uploads. Protected downloads require an Authorization header with the configured password.
 - Change post_max_size and upload_max_filesize in php.ini to meet your needs on maximum upload file size.
 - If you use Nginx, don't forget to update "client_max_body_size" param as well.
